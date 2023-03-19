@@ -31,7 +31,7 @@ const DinamicForm = (props: Props) => {
 
     const getType = (type: string) => type.slice(5).toLowerCase();
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         onSubmit(formData);
     };

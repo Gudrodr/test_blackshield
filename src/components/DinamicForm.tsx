@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { HTMLInputTypeAttribute, useEffect, useState } from "react";
 import styled from "styled-components";
 
 export interface FieldConfig {
@@ -18,40 +18,34 @@ interface Props {
     formId: string;
     config: FieldConfig[];
     onSubmit: (values: FormData) => void;
-    setIsValid: Dispatch<SetStateAction<boolean>>;
+    setIsValid: (value: boolean) => void;
+    validatePassword: (value: string) => boolean;
+    validateEmail: (value: string) => boolean;
+    validateText: (value: string) => boolean;
 }
-
-const validateEmail = (value: string) => {
-    const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    return !!value.match(validRegex);
-}
-
-const validatePassword = (value: string) => value.length > 6;
-
-const validateText = (value: string) => value.length > 2;
-
-const getType = (type: string) => type.slice(5).toLowerCase();
 
 const DinamicForm = (props: Props) => {
-    const { config, onSubmit, setIsValid, formId } = props;
+    const { config, onSubmit, setIsValid, formId, validateEmail, validatePassword, validateText } = props;
     const [formData, setFormData] = useState<Record<string, string>>({});
     const [requiredFields, setRequiredFields] = useState<Record<string, boolean>>({});
+
+    const getType = (type: string) => type.slice(5).toLowerCase();
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
         onSubmit(formData);
     };
 
-    const handleFieldChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const { id, value } = event.target;
+    const handleFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value, type } = event.target;
         setFormData((prevValues) => ({ ...prevValues, [id]: value }));
         if (requiredFields[id] !== undefined) {
-            validate(id, value);
+            validate(id, value, type);
         }
     };
 
-    const validate = debounce((id, value) => {
-        switch (id) {
+    const validate = debounce((id: string, value: string, type: HTMLInputTypeAttribute) => {
+        switch (type) {
             case 'password':
                 requiredFields[id] = validatePassword(value);
                 break;

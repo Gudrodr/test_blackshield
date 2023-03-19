@@ -1,13 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
 import DinamicForm from "./components/DinamicForm";
+import { validateEmail, validatePassword, validateText } from "./helpers";
 import { config } from "./mock_config";
 
 function App() {
   const [isFormValid, setIsFormValid] = useState(false);
   const formId = 'dinamic';
 
-  const handleFormSubmit = (values: Record<string, string>): void => {
+  const handleFormSubmit = (values: Record<string, string>) => {
     console.log('Form submitted:', values);
   };
 
@@ -26,6 +27,9 @@ function App() {
           config={config}
           onSubmit={handleFormSubmit}
           setIsValid={setIsFormValid}
+          validateEmail={validateEmail}
+          validatePassword={validatePassword}
+          validateText={validateText}
         />
         <Button form={formId} type="submit" disabled={!isFormValid}>
           Submit
@@ -86,6 +90,10 @@ const Button = styled.button`
 
   :disabled {
     background-color: #f8bb8a;
+
+    :active {
+      background-color: #f8bb8a;
+    }
   }
 
   :enabled {

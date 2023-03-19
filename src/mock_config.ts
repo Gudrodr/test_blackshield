@@ -7,8 +7,8 @@ export const config: FieldConfig[] = [
         label: 'First Name',
         defaultValue: 'Some first name'
     },
-   {
-        id:  'last_name',
+    {
+        id: 'last_name',
         type: 'inputText',
         label: 'Last Name'
     },

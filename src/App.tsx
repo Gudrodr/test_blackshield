@@ -5,6 +5,7 @@ import { config } from "./mock_config";
 
 function App() {
   const [isFormValid, setIsFormValid] = useState(false);
+  const formId = 'dinamic';
 
   const handleFormSubmit = (values: Record<string, string>): void => {
     console.log('Form submitted:', values);
@@ -13,11 +14,12 @@ function App() {
   return (
     <AppBody>
       <DinamicForm
+        formId={formId}
         config={config}
         onSubmit={handleFormSubmit}
-        onChange={setIsFormValid}
+        setIsValid={setIsFormValid}
       />
-      <button form="dinamic" type="submit" disabled={!isFormValid}>
+      <button form={formId} type="submit" disabled={!isFormValid}>
         Submit
       </button>
     </AppBody>

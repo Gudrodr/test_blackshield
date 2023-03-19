@@ -74,28 +74,44 @@ const DinamicForm = (props: Props) => {
     }, [config]);
 
     return (
-        <Container id={formId} onSubmit={handleSubmit}>
+        <Form id={formId} onSubmit={handleSubmit}>
             {config.map((item) => (
-                <div key={item.id}>
-                    <Label htmlFor={item.id}>{item.label}</Label>
-                    <Input
-                        type={getType(item.type)}
-                        id={item.id}
-                        name={item.id}
-                        defaultValue={item.defaultValue}
-                        required={item.required}
-                        onChange={handleFieldChange}
-                    />
-                </div>
+                <Input
+                    key={item.id}
+                    type={getType(item.type)}
+                    id={item.id}
+                    name={item.id}
+                    defaultValue={item.defaultValue}
+                    required={item.required}
+                    onChange={handleFieldChange}
+                    placeholder={item.label}
+                    isValid={requiredFields[item.id]}
+                />
             ))}
-        </Container>
+        </Form>
     );
 };
 
 export default DinamicForm;
 
-const Container = styled.form``;
+const Form = styled.form`
+    min-width: 20em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+`;
 
-const Label = styled.label``;
+const Input = styled.input<{ isValid?: boolean }>`
+    width: 100%;
+    padding: 1em;
+    border-width: 0.1em;
+    border-radius: 0.3em;
+    border-color: ${({ required, isValid }) => required && !isValid ? '#f8bb8a' : 'auto'};
+    border-style: solid;
+    margin-bottom: 1em;
 
-const Input = styled.input``;
+    :last-child {
+        margin-bottom: 0;
+    }
+`;

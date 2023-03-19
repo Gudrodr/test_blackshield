@@ -13,15 +13,17 @@ function App() {
 
   return (
     <AppBody>
-      <DinamicForm
-        formId={formId}
-        config={config}
-        onSubmit={handleFormSubmit}
-        setIsValid={setIsFormValid}
-      />
-      <button form={formId} type="submit" disabled={!isFormValid}>
-        Submit
-      </button>
+      <Container>
+        <DinamicForm
+          formId={formId}
+          config={config}
+          onSubmit={handleFormSubmit}
+          setIsValid={setIsFormValid}
+        />
+        <Button form={formId} type="submit" disabled={!isFormValid}>
+          Submit
+        </Button>
+      </Container>
     </AppBody>
   );
 }
@@ -32,7 +34,42 @@ const AppBody = styled.div`
   height: 100vh;
   width: 100vw;
   display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Container = styled.div`
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 2em 3em;
+  border-radius: 0.3em;
+  box-shadow:
+    1.1px 1.2px 4.2px rgba(0, 0, 0, 0.031),
+    3.1px 3.4px 11.6px rgba(0, 0, 0, 0.045),
+    7.5px 8.1px 28px rgba(0, 0, 0, 0.059),
+    25px 27px 93px rgba(0, 0, 0, 0.09);
+`;
+
+const Button = styled.button`
+  color: white;
+  width: 10em;
+  padding: 1em;
+  border: none;
+  border-radius: 0.3em;
+  margin-top: 2em;
+
+  :disabled {
+    background-color: #f8bb8a;
+  }
+
+  :enabled {
+    background-color: #ff7700;
+    cursor: pointer;
+  }
+
+  :active {
+    background-color: #bb5700;
+  }
 `;

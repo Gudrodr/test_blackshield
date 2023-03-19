@@ -14,6 +14,13 @@ function App() {
   return (
     <AppBody>
       <Container>
+        <HeadImage>💁🏻‍♀️</HeadImage>
+        <Header>
+          Some header
+        </Header>
+        <Description>
+          Some description
+        </Description>
         <DinamicForm
           formId={formId}
           config={config}
@@ -39,6 +46,7 @@ const AppBody = styled.div`
 `;
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -50,6 +58,22 @@ const Container = styled.div`
     3.1px 3.4px 11.6px rgba(0, 0, 0, 0.045),
     7.5px 8.1px 28px rgba(0, 0, 0, 0.059),
     25px 27px 93px rgba(0, 0, 0, 0.09);
+`;
+
+const HeadImage = styled.div`
+  position: absolute;
+  top: -0.7em;
+  left: 43%;
+  font-size: 5rem;
+`;
+
+const Header = styled.h2`
+  margin-bottom: 0;
+`;
+
+const Description = styled.p`
+  color: #545454;
+  margin-bottom: 1.2em;
 `;
 
 const Button = styled.button`

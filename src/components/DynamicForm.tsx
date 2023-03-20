@@ -53,20 +53,23 @@ const DynamicForm = (props: Props) => {
     }, [requiredFields, setIsValid]);
 
     useEffect(() => {
+        const reqFields: Record<string, boolean> = {};
         config.forEach(({ id, defaultValue, required }) => {
             setFormData((prevValues) => ({ ...prevValues, [id]: defaultValue || '' }));
             if (required) {
                 // создаём список полей обязательных к заполнению и валидации
-                setRequiredFields((prevValues) => ({ ...prevValues, [id]: false }));
+                reqFields[id] = false;
             }
         });
 
         // если не оказалось обязательных к заполнению полей
         // то сразу отмечаем форму как валидную
-        if (Object.keys(requiredFields).length === 0) {
+        if (Object.keys(reqFields).length === 0) {
             setIsValid(true);
+        } else {
+            setRequiredFields(reqFields);
         }
-    }, [config]);
+    }, [config, setIsValid]);
 
     return (
         <Form id={formId} onSubmit={handleSubmit}>

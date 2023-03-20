@@ -5,9 +5,7 @@ import { InputProps } from "./types";
 const PasswordInput = (props: InputProps) => {
 
     const onChange = (value: string) => {
-        const validate = validatePassword(value);
-        console.log('validate pass', validate);
-        props.onChange(props.id, value, validate);
+        props.onChange(props.id, value, validatePassword(value));
     };
 
     return (

@@ -45,12 +45,15 @@ const DynamicForm = (props: Props) => {
     const handleFieldChange = useCallback((id: string, value: string, validate: boolean) => {
         setFormData((prevValues) => ({ ...prevValues, [id]: value }));
         if (requiredFields[id] !== undefined) {
-            setRequiredFields((prevValues) => ({ ...prevValues, [id]: validate }));
+            const reqFields: Record<string, boolean> = { ...requiredFields, [id]: validate };
             // если в requiredField не осталось полей со значением false, то форма валидна
-            const isFormValid = Object.values(requiredFields).filter(item => item === false).length === 0;
+            const isFormValid = Object.values(reqFields).filter(item => item === false).length === 0;
+            setRequiredFields(reqFields);
             setIsValid(isFormValid);
         }
     }, [requiredFields, setIsValid]);
+
+
 
     useEffect(() => {
         const reqFields: Record<string, boolean> = {};

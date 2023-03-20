@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
 import DynamicForm from "./components/DynamicForm";
-import { validateEmail, validatePassword, validateText } from "./helpers";
 import { config } from "./mock_config";
 
 function App() {
@@ -9,7 +8,7 @@ function App() {
   const formId = 'dynamic';
 
   const handleFormSubmit = (values: Record<string, string>) => {
-    console.log('Form submitted:', values);
+    alert('Form submitted: ' + JSON.stringify(values));
   };
 
   return (
@@ -27,9 +26,6 @@ function App() {
           config={config}
           onSubmit={handleFormSubmit}
           setIsValid={setIsFormValid}
-          validateEmail={validateEmail}
-          validatePassword={validatePassword}
-          validateText={validateText}
         />
         <Button form={formId} type="submit" disabled={!isFormValid}>
           Submit

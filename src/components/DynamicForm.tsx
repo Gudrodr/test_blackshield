@@ -1,6 +1,8 @@
-import { debounce } from "lodash";
-import { ChangeEvent, FormEvent, HTMLInputTypeAttribute, useEffect, useState } from "react";
+import { FormEvent, HTMLInputTypeAttribute, useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
+import EmailInput from "./input/EmailInput";
+import PasswordInput from "./input/PasswordInput";
+import TextInput from "./input/TextInput";
 
 export interface FieldConfig {
     id: string;
@@ -15,10 +17,9 @@ interface Props {
     config: FieldConfig[];
     onSubmit: (values: Record<string, string>) => void;
     setIsValid: (value: boolean) => void;
-    validatePassword: (value: string) => boolean;
-    validateEmail: (value: string) => boolean;
-    validateText: (value: string) => boolean;
 }
+
+const getType = (type: string): HTMLInputTypeAttribute => type.slice(5).toLowerCase();
 
 const DynamicForm = (props: Props) => {
     const {
@@ -26,44 +27,28 @@ const DynamicForm = (props: Props) => {
         onSubmit,
         setIsValid,
         formId,
-        validateEmail,
-        validatePassword,
-        validateText
     } = props;
     const [formData, setFormData] = useState<Record<string, string>>({});
     const [requiredFields, setRequiredFields] = useState<Record<string, boolean>>({});
 
-    const getType = (type: string) => type.slice(5).toLowerCase();
+    const inputMap: Record<string, typeof PasswordInput | typeof EmailInput | typeof TextInput> = {
+        password: PasswordInput,
+        email: EmailInput,
+        text: TextInput,
+    };
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         onSubmit(formData);
     };
 
-    const handleFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { id, value, type } = event.target;
+    const handleFieldChange = useCallback((id: string, value: string, validate: boolean) => {
         setFormData((prevValues) => ({ ...prevValues, [id]: value }));
-        // проверка на обязательное к заполнению поле
-        if (requiredFields[id] !== undefined) {
-            validate(id, value, type);
-        }
-    };
-
-    const validate = debounce((id: string, value: string, type: HTMLInputTypeAttribute) => {
-        switch (type) {
-            case 'password':
-                requiredFields[id] = validatePassword(value);
-                break;
-            case 'email':
-                requiredFields[id] = validateEmail(value);
-                break;
-            default:
-                requiredFields[id] = validateText(value);
-        };
+        setRequiredFields((prevValues) => ({ ...prevValues, [id]: validate }));
         // если в requiredField не осталось полей со значением false, то форма валидна
         const isFormValid = Object.values(requiredFields).filter(item => item === false).length === 0;
         setIsValid(isFormValid);
-    }, 500)
+    }, [requiredFields, setIsValid]);
 
     useEffect(() => {
         config.forEach(({ id, defaultValue, required }) => {
@@ -76,19 +61,16 @@ const DynamicForm = (props: Props) => {
 
     return (
         <Form id={formId} onSubmit={handleSubmit}>
-            {config.map((item) => (
-                <Input
-                    key={item.id}
-                    type={getType(item.type)}
-                    id={item.id}
-                    name={item.id}
-                    defaultValue={item.defaultValue}
-                    required={item.required}
-                    onChange={handleFieldChange}
-                    placeholder={item.label}
-                    isValid={requiredFields[item.id]}
-                />
-            ))}
+            {config.map((item) => {
+                const Input = inputMap[getType(item.type)];
+                const props = {
+                    ...item,
+                    onChange: handleFieldChange,
+                    isValid: requiredFields[item.id]
+                };
+
+                return <Input {...props} key={item.id} />
+            })}
         </Form>
     );
 };
@@ -101,18 +83,4 @@ const Form = styled.form`
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-`;
-
-const Input = styled.input<{ isValid?: boolean }>`
-    width: 100%;
-    padding: 1em;
-    border-width: 0.1em;
-    border-radius: 0.3em;
-    border-color: ${({ required, isValid }) => required && !isValid ? '#f8bb8a' : 'auto'};
-    border-style: solid;
-    margin-bottom: 1em;
-
-    :last-child {
-        margin-bottom: 0;
-    }
 `;

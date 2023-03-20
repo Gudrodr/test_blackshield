@@ -37,10 +37,10 @@ const DynamicForm = (props: Props) => {
         text: TextInput,
     };
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         onSubmit(formData);
-    };
+    }, [onSubmit, formData]);
 
     const handleFieldChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         const { id, value } = event.target;

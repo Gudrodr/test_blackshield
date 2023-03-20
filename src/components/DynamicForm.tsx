@@ -54,6 +54,7 @@ const DynamicForm = (props: Props) => {
         config.forEach(({ id, defaultValue, required }) => {
             setFormData((prevValues) => ({ ...prevValues, [id]: defaultValue || '' }));
             if (required) {
+                // создаём список полей обязательных к заполнению и валидации
                 setRequiredFields((prevValues) => ({ ...prevValues, [id]: false }));
             }
         });

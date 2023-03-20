@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import { HTMLInputTypeAttribute, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, HTMLInputTypeAttribute, useEffect, useState } from "react";
 import styled from "styled-components";
 
 export interface FieldConfig {
@@ -10,35 +10,40 @@ export interface FieldConfig {
     required?: boolean;
 }
 
-interface FormData {
-    [key: string]: string;
-}
-
 interface Props {
     formId: string;
     config: FieldConfig[];
-    onSubmit: (values: FormData) => void;
+    onSubmit: (values: Record<string, string>) => void;
     setIsValid: (value: boolean) => void;
     validatePassword: (value: string) => boolean;
     validateEmail: (value: string) => boolean;
     validateText: (value: string) => boolean;
 }
 
-const DinamicForm = (props: Props) => {
-    const { config, onSubmit, setIsValid, formId, validateEmail, validatePassword, validateText } = props;
+const DynamicForm = (props: Props) => {
+    const {
+        config,
+        onSubmit,
+        setIsValid,
+        formId,
+        validateEmail,
+        validatePassword,
+        validateText
+    } = props;
     const [formData, setFormData] = useState<Record<string, string>>({});
     const [requiredFields, setRequiredFields] = useState<Record<string, boolean>>({});
 
     const getType = (type: string) => type.slice(5).toLowerCase();
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         onSubmit(formData);
     };
 
-    const handleFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { id, value, type } = event.target;
         setFormData((prevValues) => ({ ...prevValues, [id]: value }));
+        // проверка на обязательное к заполнению поле
         if (requiredFields[id] !== undefined) {
             validate(id, value, type);
         }
@@ -55,7 +60,9 @@ const DinamicForm = (props: Props) => {
             default:
                 requiredFields[id] = validateText(value);
         };
-        setIsValid(Object.values(requiredFields).filter(item => item === false).length === 0);
+        // если в requiredField не осталось полей со значением false, то форма валидна
+        const isFormValid = Object.values(requiredFields).filter(item => item === false).length === 0;
+        setIsValid(isFormValid);
     }, 500)
 
     useEffect(() => {
@@ -86,7 +93,7 @@ const DinamicForm = (props: Props) => {
     );
 };
 
-export default DinamicForm;
+export default DynamicForm;
 
 const Form = styled.form`
     min-width: 20em;

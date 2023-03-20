@@ -1,4 +1,4 @@
-import { FieldConfig } from "./components/DinamicForm";
+import { FieldConfig } from "./components/DynamicForm";
 
 export const config: FieldConfig[] = [
     {

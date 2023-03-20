@@ -1,12 +1,12 @@
 import { useState } from "react";
 import styled from "styled-components";
-import DinamicForm from "./components/DinamicForm";
+import DynamicForm from "./components/DynamicForm";
 import { validateEmail, validatePassword, validateText } from "./helpers";
 import { config } from "./mock_config";
 
 function App() {
   const [isFormValid, setIsFormValid] = useState(false);
-  const formId = 'dinamic';
+  const formId = 'dynamic';
 
   const handleFormSubmit = (values: Record<string, string>) => {
     console.log('Form submitted:', values);
@@ -22,7 +22,7 @@ function App() {
         <Description>
           Some description
         </Description>
-        <DinamicForm
+        <DynamicForm
           formId={formId}
           config={config}
           onSubmit={handleFormSubmit}

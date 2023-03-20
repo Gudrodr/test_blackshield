@@ -23,16 +23,19 @@ const BaseInput = (props: Props) => {
 
 export default BaseInput;
 
-const Input = styled.input<{ isValid?: boolean }>`
+const Input = styled.input`
     width: 100%;
     padding: 1em;
     border-width: 0.1em;
     border-radius: 0.3em;
-    border-color: ${({ required, isValid }) => required && !isValid ? '#f8bb8a' : 'auto'};
     border-style: solid;
     margin-bottom: 1em;
 
     :last-child {
         margin-bottom: 0;
+    }
+
+    :invalid {
+        border-color: #f8bb8a;
     }
 `;

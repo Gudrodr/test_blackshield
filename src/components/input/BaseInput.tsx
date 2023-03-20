@@ -3,16 +3,11 @@ import styled from "styled-components";
 import { FieldConfig } from "../DynamicForm";
 
 interface Props extends FieldConfig {
-    isValid: boolean;
     htmlType: HTMLInputTypeAttribute;
-    onChange: (value: string) => void;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const BaseInput = (props: Props) => {
-    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-        props.onChange(event.target.value);
-    };
-
     return (
         <Input
             type={props.htmlType}
@@ -20,9 +15,8 @@ const BaseInput = (props: Props) => {
             name={props.id}
             defaultValue={props.defaultValue}
             required={props.required}
-            onChange={onChange}
+            onChange={props.onChange}
             placeholder={props.label}
-            isValid={props.isValid}
         />
     );
 }

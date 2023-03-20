@@ -1,4 +1,4 @@
-import { FormEvent, HTMLInputTypeAttribute, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, HTMLInputTypeAttribute, useCallback, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import EmailInput from "./input/EmailInput";
 import PasswordInput from "./input/PasswordInput";
@@ -29,7 +29,7 @@ const DynamicForm = (props: Props) => {
         formId,
     } = props;
     const [formData, setFormData] = useState<Record<string, string>>({});
-    const [requiredFields, setRequiredFields] = useState<Record<string, boolean>>({});
+    const formRef = useRef<HTMLFormElement>(null);
 
     const inputMap: Record<string, typeof PasswordInput | typeof EmailInput | typeof TextInput> = {
         password: PasswordInput,
@@ -42,49 +42,26 @@ const DynamicForm = (props: Props) => {
         onSubmit(formData);
     };
 
-    const handleFieldChange = useCallback((id: string, value: string, validate: boolean) => {
+    const handleFieldChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = event.target;
         setFormData((prevValues) => ({ ...prevValues, [id]: value }));
-        if (requiredFields[id] !== undefined) {
-            const reqFields: Record<string, boolean> = { ...requiredFields, [id]: validate };
-            // если в requiredField не осталось полей со значением false, то форма валидна
-            const isFormValid = Object.values(reqFields).filter(item => item === false).length === 0;
-            setRequiredFields(reqFields);
-            setIsValid(isFormValid);
-        }
-    }, [requiredFields, setIsValid]);
+        setIsValid(formRef.current?.checkValidity() || false);
+    }, [setIsValid]);
 
 
 
     useEffect(() => {
-        const reqFields: Record<string, boolean> = {};
-        config.forEach(({ id, defaultValue, required }) => {
+        config.forEach(({ id, defaultValue }) => {
             setFormData((prevValues) => ({ ...prevValues, [id]: defaultValue || '' }));
-            if (required) {
-                // создаём список полей обязательных к заполнению и валидации
-                reqFields[id] = false;
-            }
         });
-
-        // если не оказалось обязательных к заполнению полей
-        // то сразу отмечаем форму как валидную
-        if (Object.keys(reqFields).length === 0) {
-            setIsValid(true);
-        } else {
-            setRequiredFields(reqFields);
-        }
-    }, [config, setIsValid]);
+    }, [config]);
 
     return (
-        <Form id={formId} onSubmit={handleSubmit}>
+        <Form id={formId} ref={formRef} onSubmit={handleSubmit}>
             {config.map((item) => {
                 const Input = inputMap[getType(item.type)];
-                const props = {
-                    ...item,
-                    onChange: handleFieldChange,
-                    isValid: requiredFields[item.id]
-                };
 
-                return <Input {...props} key={item.id} />
+                return <Input {...item} key={item.id} onChange={handleFieldChange} />
             })}
         </Form>
     );

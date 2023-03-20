@@ -44,10 +44,12 @@ const DynamicForm = (props: Props) => {
 
     const handleFieldChange = useCallback((id: string, value: string, validate: boolean) => {
         setFormData((prevValues) => ({ ...prevValues, [id]: value }));
-        setRequiredFields((prevValues) => ({ ...prevValues, [id]: validate }));
-        // если в requiredField не осталось полей со значением false, то форма валидна
-        const isFormValid = Object.values(requiredFields).filter(item => item === false).length === 0;
-        setIsValid(isFormValid);
+        if (requiredFields[id] !== undefined) {
+            setRequiredFields((prevValues) => ({ ...prevValues, [id]: validate }));
+            // если в requiredField не осталось полей со значением false, то форма валидна
+            const isFormValid = Object.values(requiredFields).filter(item => item === false).length === 0;
+            setIsValid(isFormValid);
+        }
     }, [requiredFields, setIsValid]);
 
     useEffect(() => {
@@ -58,6 +60,12 @@ const DynamicForm = (props: Props) => {
                 setRequiredFields((prevValues) => ({ ...prevValues, [id]: false }));
             }
         });
+
+        // если не оказалось обязательных к заполнению полей
+        // то сразу отмечаем форму как валидную
+        if (Object.keys(requiredFields).length === 0) {
+            setIsValid(true);
+        }
     }, [config]);
 
     return (

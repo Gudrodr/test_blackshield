@@ -21,6 +21,12 @@ interface Props {
 
 const getType = (type: string): HTMLInputTypeAttribute => type.slice(5).toLowerCase();
 
+const inputMap: Record<string, typeof PasswordInput | typeof EmailInput | typeof TextInput> = {
+    password: PasswordInput,
+    email: EmailInput,
+    text: TextInput,
+};
+
 const DynamicForm = (props: Props) => {
     const {
         config,
@@ -30,12 +36,6 @@ const DynamicForm = (props: Props) => {
     } = props;
     const [formData, setFormData] = useState<Record<string, string>>({});
     const formRef = useRef<HTMLFormElement>(null);
-
-    const inputMap: Record<string, typeof PasswordInput | typeof EmailInput | typeof TextInput> = {
-        password: PasswordInput,
-        email: EmailInput,
-        text: TextInput,
-    };
 
     const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
